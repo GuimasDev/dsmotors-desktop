@@ -1,6 +1,7 @@
 package controle;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import entidades.Agendamento;
@@ -20,7 +21,13 @@ public class ControleAgendamento {
 
     public void inserir(List<Veiculo> veiculos) {
         try {
-            janela = new JanelaAgendamento(dao.consultarTodos(), veiculos);
+            List<Agendamento> agendamentosUser = new ArrayList<Agendamento>();
+            for (Veiculo veiculo : veiculos) {
+                for (Agendamento consulta : dao.consultarPorVeiculo(veiculo.getCodigo())) {
+                    agendamentosUser.add(consulta);
+                }
+            }
+            janela = new JanelaAgendamento(agendamentosUser, veiculos);
             Agendamento a = janela.getAgendamento();
             try {
                 dao.inserir(a);
@@ -38,7 +45,7 @@ public class ControleAgendamento {
     }
 
     public void inserir(Agendamento a) {
-        try{
+        try {
             dao.inserir(a);
         } catch (NullPointerException e) {
             new JanelaAviso("Agendamento inválido:" + e.getMessage());
@@ -95,13 +102,20 @@ public class ControleAgendamento {
         Agendamento agendamentoEdit = null;
         try {
             do {
-                List<Agendamento> lista = dao.consultarTodos();
+                List<Agendamento> agendamentosUser = new ArrayList<>();
+                for (Veiculo veiculo : veiculos) {
+                    for (Agendamento consulta : dao.consultarPorVeiculo(veiculo.getCodigo())) {
+                        agendamentosUser.add(consulta);
+                    }
+                }
+                List<Agendamento> lista = agendamentosUser;
                 if (lista != null) {
                     if (janela != null) {
                         janela.dispose();
                     }
 
-                    janela = (editar) ? new JanelaAgendamento(lista, veiculos, agendamentoEdit) : new JanelaAgendamento(lista, veiculos);
+                    janela = (editar) ? new JanelaAgendamento(lista, veiculos, agendamentoEdit)
+                            : new JanelaAgendamento(lista, veiculos);
                     editar = false;
 
                     if (janela.getBotao() != null) {

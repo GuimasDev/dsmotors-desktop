@@ -20,7 +20,7 @@ public class ControleVeiculo {
 
     public void inserir(Usuario usuario) {
         try {
-            janela = new JanelaVeiculo(dao.consultarTodos(), usuario);
+            janela = new JanelaVeiculo(dao.consultarPorUsuario(usuario.getCodigo()), usuario);
             Veiculo v = janela.getVeiculo();
             try {
                 dao.inserir(v);
@@ -97,7 +97,7 @@ public class ControleVeiculo {
         Veiculo veiculoEdit = null;
         try {
             do {
-                List<Veiculo> lista = dao.consultarTodos();
+                List<Veiculo> lista = dao.consultarPorUsuario(usuario.getCodigo());
                 if (lista != null) {
                     if (janela != null) {
                         janela.dispose();
